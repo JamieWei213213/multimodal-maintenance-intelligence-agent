@@ -27,6 +27,7 @@ maintenance-ingest = "maintenance_intelligence.cli:main"
 maintenance-evaluate = "maintenance_intelligence.evaluate_cli:main"
 maintenance-evaluate-full = "maintenance_intelligence.evaluate_full_cli:main"
 maintenance-index = "maintenance_intelligence.index_cli:main"
+maintenance-visual-inventory = "maintenance_intelligence.visual_cli:main"
 maintenance-api = "maintenance_intelligence.api_cli:main"
 
 [tool.hatch.build.targets.wheel]

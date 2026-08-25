@@ -5,7 +5,10 @@
     "chunks": 11888,
     "vectors": 11888,
     "table_chunks": 1874,
-    "safety_chunks": 496
+    "safety_chunks": 496,
+    "visual_candidates": 1462,
+    "raster_image_candidates": 372,
+    "vector_region_candidates": 1090
   },
   "golden_set": {
     "answerable_questions": 12,
@@ -25,7 +28,7 @@
     "unanswerable_false_answer_rate": 0.0
   },
   "verification": {
-    "backend_tests": 23,
+    "backend_tests": 24,
     "frontend_lint": "passing",
     "frontend_build": "passing",
     "docker_runtime": "not_verified_locally"

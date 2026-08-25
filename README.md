@@ -7,7 +7,8 @@ A grounded, text-first troubleshooting assistant for the ABB ACS580-01 variable-
 ```text
 ABB manuals -> PyMuPDF/OCR -> page-bounded chunks -> BM25 in memory
                                       |             -> FastEmbed -> Qdrant
-                                      +-> provenance                 |
+                                      |-> provenance                 |
+                                      +-> visual candidate inventory |
 Technician question -> BM25 + dense -> reciprocal-rank fusion -> grounded extractive answer
                                                                   |-> validated citations
                                                                   |-> highlighted PDF evidence
@@ -28,6 +29,7 @@ The UI and `/evaluation` endpoint expose a versioned evaluation snapshot. Curren
 - Verified checksums: `evaluation/corpus_checksums.csv`
 - Golden questions: `evaluation/golden_questions.csv`
 - Documents, pages, chunks, and run manifest: `data/processed/`
+- Page-linked raster and vector candidates: `data/processed/visual_assets.jsonl` (generated and ignored by Git)
 - Local Qdrant index: `data/qdrant/` (generated and ignored by Git)
 - Retrieval reports: `evaluation/results/` (generated and ignored by Git)
 
@@ -40,6 +42,7 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
 maintenance-ingest
+maintenance-visual-inventory
 maintenance-evaluate
 maintenance-index --recreate
 maintenance-evaluate-full
@@ -83,6 +86,12 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 - Low-confidence retrieval returns an explicit insufficient-evidence response.
 - Safety-tagged evidence is surfaced and safety wording is not rewritten into new procedures.
 
+## Visual provenance pipeline
+
+`maintenance-visual-inventory` inventories embedded raster images and vector-heavy page regions before any visual-model experiments. Every record retains the source filename, one-based PDF page, bounding box, dimensions when available, nearby caption text, and a stable asset ID. The current corpus contains 1,462 candidates: 372 raster images and 1,090 vector regions. Optional page crops can be rendered for annotation or later multimodal evaluation.
+
+These are deliberately called *candidates*. The detector does not classify diagram meaning, read wiring relationships, or use visual content to answer questions. That separation makes future diagram experiments measurable and keeps current resume claims honest.
+
 ## Known limitations
 
 - OCR fallback requires a local Tesseract installation; low-text pages are recorded as warnings when it is unavailable.
@@ -90,7 +99,7 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 - The extractive answerer is safer and auditable but less conversational than a carefully constrained LLM.
 - Qdrant indexing is CPU-heavy on first run because embeddings are created locally.
 - The evidence selector is evaluated on only 20 questions from one product family; its perfect answer-level snapshot is a regression baseline, not evidence of generalization.
-- Diagram interpretation is not implemented yet; diagrams are currently retrievable only through nearby text and captions.
+- Diagram interpretation is not implemented yet; 1,462 page-linked visual candidates have been inventoried, but they are not yet semantically interpreted or used for answering.
 - PostgreSQL stores query audit events, while document metadata remains in versioned JSONL artifacts for this MVP.
 
 ## Recommended next upgrades
@@ -98,7 +107,7 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 1. Expand and manually verify the golden set, including adversarial and unanswerable questions; tune the abstention threshold from measured precision/coverage.
 2. Add reranking after hybrid retrieval and compare it against the existing baseline before accepting the added latency.
 3. Add OCR layout regression tests and install Tesseract for scanned manuals.
-4. Add table-specific normalization and diagram/callout extraction only after text retrieval metrics are stable.
+4. Manually label a representative sample of visual candidates, measure detector precision/recall, then benchmark diagram-aware retrieval against the text-only baseline.
 5. Add an optional citation-constrained LLM synthesis layer with sentence-level entailment checks; retain extractive fallback.
 6. Pin the Qdrant container image after testing a deployment target, add authentication/TLS, migrations, observability, rate limits, and background indexing.
 7. Consider a knowledge graph only if cross-document evaluation demonstrates a measurable failure that graph traversal fixes.
