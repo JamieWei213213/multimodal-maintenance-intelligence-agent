@@ -11,7 +11,7 @@ form, .answer, .evaluation { background: color-mix(in srgb, var(--panel) 90%, tr
 .evaluation-heading { display: flex; justify-content: space-between; gap: 20px; align-items: end; }
 .evaluation-heading h2 { margin: 8px 0 0; font-size: 26px; }
 .evaluation-heading > span { color: var(--muted); font-size: 13px; }
-.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 22px; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 22px; }
 .metric-grid div { background: #091215; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .metric-grid strong { display: block; color: var(--accent); font-size: 28px; }
 .metric-grid span { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }

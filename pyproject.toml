@@ -9,6 +9,7 @@ description = "Grounded ingestion pipeline for industrial maintenance manuals"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi>=0.115,<1",
+  "numpy>=1.26,<3",
   "psycopg[binary]>=3.2,<4",
   "prometheus-client>=0.21,<1",
   "PyMuPDF>=1.24,<2",
@@ -30,6 +31,8 @@ maintenance-index = "maintenance_intelligence.index_cli:main"
 maintenance-visual-inventory = "maintenance_intelligence.visual_cli:main"
 maintenance-visual-sample = "maintenance_intelligence.visual_sample_cli:main"
 maintenance-visual-evaluate = "maintenance_intelligence.visual_evaluate_cli:main"
+maintenance-visual-retrieval-evaluate = "maintenance_intelligence.visual_retrieval_cli:main"
+maintenance-visual-clip-evaluate = "maintenance_intelligence.visual_clip_cli:main"
 maintenance-api = "maintenance_intelligence.api_cli:main"
 
 [tool.hatch.build.targets.wheel]

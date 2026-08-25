@@ -34,8 +34,18 @@
     "strata_covered": 6,
     "warning": "Measures candidate usefulness only; does not measure detector recall, diagram comprehension, or visual question answering."
   },
+  "visual_retrieval": {
+    "questions": 12,
+    "candidate_pool_size": 24,
+    "lexical_asset_recall_at_10": 0.4166666667,
+    "clip_asset_recall_at_10": 0.5833333333,
+    "hybrid_asset_recall_at_10": 0.6666666667,
+    "clip_asset_recall_at_3": 0.5833333333,
+    "hybrid_asset_recall_at_3": 0.5,
+    "warning": "Small post-authored candidate-pool benchmark; not full-corpus retrieval or diagram comprehension."
+  },
   "verification": {
-    "backend_tests": 31,
+    "backend_tests": 36,
     "frontend_lint": "passing",
     "frontend_build": "passing",
     "docker_runtime": "not_verified_locally",

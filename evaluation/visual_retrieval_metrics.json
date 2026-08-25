@@ -1,0 +1,426 @@
+{
+  "questions": 12,
+  "metrics": {
+    "asset_mrr": 0.3333333333333333,
+    "asset_recall_at_1": 0.25,
+    "asset_recall_at_3": 0.4166666666666667,
+    "asset_recall_at_5": 0.4166666666666667,
+    "asset_recall_at_10": 0.4166666666666667,
+    "page_recall_at_1": 0.25,
+    "page_recall_at_3": 0.4166666666666667,
+    "page_recall_at_5": 0.4166666666666667,
+    "page_recall_at_10": 0.4166666666666667
+  },
+  "method": "BM25 over nearby caption text and same-page extracted text; no pixel embeddings or visual reasoning.",
+  "limitations": [
+    "The candidate pool contains only 24 manually inspected regions from one product family.",
+    "The 12 queries were written after visual inspection and have not been independently authored.",
+    "Page-text retrieval does not demonstrate diagram comprehension."
+  ],
+  "results": [
+    {
+      "id": "VQ001",
+      "question": "Show the CAIO-01 bipolar analog I/O adapter module wiring schematic.",
+      "expected_asset_id": "vis_1c6ef0a5df1198b4783d3f30",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 2.580475,
+          "asset_id": "vis_8fc6fe8f40a689dc407950b9",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 31,
+          "asset_type": "raster_image"
+        }
+      ]
+    },
+    {
+      "id": "VQ002",
+      "question": "Find the connection example showing the terminal wiring.",
+      "expected_asset_id": "vis_b35a3ddb10e2cc7f408049ca",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 3.913724,
+          "asset_id": "vis_8fc6fe8f40a689dc407950b9",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 31,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 2,
+          "score": 2.061233,
+          "asset_id": "vis_5622d30bee7f7337a0bb7f6c",
+          "source_document": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+          "pdf_page": 21,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 3,
+          "score": 2.032461,
+          "asset_id": "vis_b90ea29a8633dde78c1f3e27",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 54,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 4,
+          "score": 1.431639,
+          "asset_id": "vis_1c6ef0a5df1198b4783d3f30",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 466,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 5,
+          "score": 0.241725,
+          "asset_id": "vis_d3213c6eb9008270ae32a22d",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 46,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 6,
+          "score": 0.233551,
+          "asset_id": "vis_b204ec59b5f05fd7178b5444",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 236,
+          "asset_type": "raster_image"
+        }
+      ]
+    },
+    {
+      "id": "VQ003",
+      "question": "Show the control unit terminal and component layout for relay outputs.",
+      "expected_asset_id": "vis_b204ec59b5f05fd7178b5444",
+      "asset_rank": 1,
+      "page_rank": 1,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 5.734132,
+          "asset_id": "vis_b204ec59b5f05fd7178b5444",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 236,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 2,
+          "score": 1.800443,
+          "asset_id": "vis_1c6ef0a5df1198b4783d3f30",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 466,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 3,
+          "score": 0.704373,
+          "asset_id": "vis_11cb9d5fd1b8f36de5d31d00",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 269,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    },
+    {
+      "id": "VQ004",
+      "question": "Find the circuit breaker selection table and its usage notes.",
+      "expected_asset_id": "vis_81bf8f73d5d91e076164dd39",
+      "asset_rank": 1,
+      "page_rank": 1,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 7.759554,
+          "asset_id": "vis_81bf8f73d5d91e076164dd39",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 328,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 2,
+          "score": 1.580959,
+          "asset_id": "vis_11cb9d5fd1b8f36de5d31d00",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 269,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 3,
+          "score": 1.234634,
+          "asset_id": "vis_385ff313dbcb24aafc55deb2",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 107,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    },
+    {
+      "id": "VQ005",
+      "question": "Show the mechanical cover removal installation sequence.",
+      "expected_asset_id": "vis_c85d2529cbc43f560e59ddc6",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 2.440168,
+          "asset_id": "vis_7c2f560cb74c6d2fe3eb9b12",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 237,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 2,
+          "score": 1.764392,
+          "asset_id": "vis_9f00f984c8310114746ad4b0",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 414,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 3,
+          "score": 1.557292,
+          "asset_id": "vis_d3213c6eb9008270ae32a22d",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 46,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 4,
+          "score": 0.972239,
+          "asset_id": "vis_b90ea29a8633dde78c1f3e27",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 54,
+          "asset_type": "raster_image"
+        }
+      ]
+    },
+    {
+      "id": "VQ006",
+      "question": "Find the mechanical brake control parameter table.",
+      "expected_asset_id": "vis_9f00f984c8310114746ad4b0",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": []
+    },
+    {
+      "id": "VQ007",
+      "question": "Show the R5 v2 frame construction and mounting diagrams.",
+      "expected_asset_id": "vis_d3213c6eb9008270ae32a22d",
+      "asset_rank": 1,
+      "page_rank": 1,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 5.988518,
+          "asset_id": "vis_d3213c6eb9008270ae32a22d",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 46,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 2,
+          "score": 4.237091,
+          "asset_id": "vis_81bf8f73d5d91e076164dd39",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 328,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 3,
+          "score": 2.632962,
+          "asset_id": "vis_bad120ca6c1cf34b6a03fe1e",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 274,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 4,
+          "score": 0.145917,
+          "asset_id": "vis_b90ea29a8633dde78c1f3e27",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 54,
+          "asset_type": "raster_image"
+        }
+      ]
+    },
+    {
+      "id": "VQ008",
+      "question": "Find the terminal connection voltage rating tables.",
+      "expected_asset_id": "vis_138cc04c769853cbdd9c0903",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 4.459081,
+          "asset_id": "vis_81bf8f73d5d91e076164dd39",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 328,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 2,
+          "score": 1.373389,
+          "asset_id": "vis_b204ec59b5f05fd7178b5444",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 236,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 3,
+          "score": 0.897495,
+          "asset_id": "vis_bad120ca6c1cf34b6a03fe1e",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 274,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 4,
+          "score": 0.856866,
+          "asset_id": "vis_11cb9d5fd1b8f36de5d31d00",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 269,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 5,
+          "score": 0.241725,
+          "asset_id": "vis_d3213c6eb9008270ae32a22d",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 46,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    },
+    {
+      "id": "VQ009",
+      "question": "Show the Macro select parameter table.",
+      "expected_asset_id": "vis_385ff313dbcb24aafc55deb2",
+      "asset_rank": 2,
+      "page_rank": 2,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 0.525688,
+          "asset_id": "vis_3d41bcdb0b6e9e8631bf1caf",
+          "source_document": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+          "pdf_page": 142,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 2,
+          "score": 0.14636,
+          "asset_id": "vis_385ff313dbcb24aafc55deb2",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 107,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    },
+    {
+      "id": "VQ010",
+      "question": "Show the main cooling fan replacement sequence for frame R9.",
+      "expected_asset_id": "vis_bad120ca6c1cf34b6a03fe1e",
+      "asset_rank": 2,
+      "page_rank": 2,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 9.407101,
+          "asset_id": "vis_d3213c6eb9008270ae32a22d",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 46,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 2,
+          "score": 7.303239,
+          "asset_id": "vis_bad120ca6c1cf34b6a03fe1e",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 274,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 3,
+          "score": 2.440168,
+          "asset_id": "vis_7c2f560cb74c6d2fe3eb9b12",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 237,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 4,
+          "score": 1.335418,
+          "asset_id": "vis_8fc6fe8f40a689dc407950b9",
+          "source_document": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+          "pdf_page": 31,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 5,
+          "score": 1.178772,
+          "asset_id": "vis_5622d30bee7f7337a0bb7f6c",
+          "source_document": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+          "pdf_page": 21,
+          "asset_type": "raster_image"
+        },
+        {
+          "rank": 6,
+          "score": 0.238348,
+          "asset_id": "vis_81bf8f73d5d91e076164dd39",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 328,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    },
+    {
+      "id": "VQ011",
+      "question": "Find the cable handling prohibition and routing illustration.",
+      "expected_asset_id": "vis_34a7158768c932bf7ff5b63b",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 3.161596,
+          "asset_id": "vis_d3213c6eb9008270ae32a22d",
+          "source_document": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+          "pdf_page": 46,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    },
+    {
+      "id": "VQ012",
+      "question": "Show drive configuration parameter table 07.36.",
+      "expected_asset_id": "vis_7c2f560cb74c6d2fe3eb9b12",
+      "asset_rank": null,
+      "page_rank": null,
+      "top_results": [
+        {
+          "rank": 1,
+          "score": 0.654926,
+          "asset_id": "vis_b35a3ddb10e2cc7f408049ca",
+          "source_document": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+          "pdf_page": 43,
+          "asset_type": "vector_drawing_region"
+        },
+        {
+          "rank": 2,
+          "score": 0.634772,
+          "asset_id": "vis_138cc04c769853cbdd9c0903",
+          "source_document": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+          "pdf_page": 138,
+          "asset_type": "vector_drawing_region"
+        }
+      ]
+    }
+  ],
+  "candidate_pool_size": 24
+}

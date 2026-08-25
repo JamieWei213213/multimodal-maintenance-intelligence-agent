@@ -46,6 +46,8 @@ maintenance-ingest
 maintenance-visual-inventory
 maintenance-visual-sample
 maintenance-visual-evaluate
+maintenance-visual-retrieval-evaluate
+maintenance-visual-clip-evaluate
 maintenance-evaluate
 maintenance-index --recreate
 maintenance-evaluate-full
@@ -100,6 +102,12 @@ A deterministic 24-item sample covers all six document/type strata (three manual
 
 The API exposes provenance-checked visual crops at `/visuals/{asset_id}/image`. Arbitrary filenames are never accepted by this route, crop bounds come from the offline inventory, and internal rendered-file paths are excluded from the response schema. The UI labels every crop as contextual evidence that was not used to form the answer.
 
+## Multimodal retrieval experiment
+
+Twelve technician-style visual queries were manually verified against the inspected candidate set. On the identical 24-candidate pool, text-linked BM25 achieved 41.7% asset Recall@10 and 0.333 MRR; paired CLIP text/pixel embeddings achieved 58.3% Recall@10 and 0.403 MRR; untuned 1:1 reciprocal-rank fusion achieved the best Recall@10 at 66.7% but lower Recall@3 than CLIP (50.0% versus 58.3%). This demonstrates complementary text and pixel signals without pretending the current sample establishes generalization.
+
+The CLIP models run locally through FastEmbed, and their cache is excluded from Git. The benchmark reports preserve every query, target asset, rank, and top result in `evaluation/visual_retrieval_metrics.json`, `evaluation/visual_clip_metrics.json`, and `evaluation/visual_hybrid_metrics.json`. The questions were authored after visual inspection, the pool contains only 24 candidates, and there is no held-out tuning set; therefore visual retrieval remains an evaluated experiment and is not allowed to influence maintenance answers.
+
 ## Known limitations
 
 - OCR fallback requires a local Tesseract installation; low-text pages are recorded as warnings when it is unavailable.
@@ -108,6 +116,7 @@ The API exposes provenance-checked visual crops at `/visuals/{asset_id}/image`. 
 - Qdrant indexing is CPU-heavy on first run because embeddings are created locally.
 - The evidence selector is evaluated on only 20 questions from one product family; its perfect answer-level snapshot is a regression baseline, not evidence of generalization.
 - Diagram interpretation is not implemented yet; 1,462 page-linked visual candidates have been inventoried, but they are not yet semantically interpreted or used for answering.
+- The multimodal retrieval benchmark contains only 12 queries over 24 inspected candidates and is not a full-corpus or held-out evaluation.
 - PostgreSQL stores query audit events, while document metadata remains in versioned JSONL artifacts for this MVP.
 
 ## Recommended next upgrades

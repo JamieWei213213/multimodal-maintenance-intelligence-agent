@@ -33,6 +33,7 @@ type Evaluation = {
   golden_set: { answerable_questions: number; unanswerable_questions: number; warning: string };
   retrieval: { bm25_recall_at_10: number; dense_recall_at_10: number; hybrid_recall_at_10: number; hybrid_mrr: number };
   answering: { answerable_citation_accuracy: number; unanswerable_abstention_recall: number };
+  visual_retrieval?: { hybrid_asset_recall_at_10: number; candidate_pool_size: number; warning: string };
 };
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -92,8 +93,10 @@ export default function Home() {
             <div><strong>{Math.round(evaluation.retrieval.hybrid_recall_at_10 * 100)}%</strong><span>hybrid Recall@10</span></div>
             <div><strong>{Math.round(evaluation.answering.answerable_citation_accuracy * 100)}%</strong><span>expected-page citation</span></div>
             <div><strong>{Math.round(evaluation.answering.unanswerable_abstention_recall * 100)}%</strong><span>abstention recall</span></div>
+            {evaluation.visual_retrieval && <div><strong>{Math.round(evaluation.visual_retrieval.hybrid_asset_recall_at_10 * 100)}%</strong><span>visual hybrid Recall@10</span></div>}
           </div>
           <p className="evaluation-warning">{evaluation.golden_set.warning}</p>
+          {evaluation.visual_retrieval && <p className="evaluation-warning">Visual benchmark: {evaluation.visual_retrieval.warning}</p>}
         </section>
       )}
 

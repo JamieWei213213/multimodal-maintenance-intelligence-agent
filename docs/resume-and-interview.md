@@ -14,6 +14,7 @@ Multimodal Maintenance Intelligence Agent — grounded RAG for industrial troubl
 - Added a passing Python test suite, frontend lint and production-build gates, Docker Compose orchestration, container health checks, and GitHub Actions CI.
 - Built a provenance-preserving visual inventory of 1,462 page-linked candidates (372 raster images and 1,090 vector regions), with stable IDs, bounding boxes, and nearby captions, as the measurable foundation for later diagram understanding.
 - Created a deterministic visual-evaluation workflow spanning all six document/type strata; manually inspected 24 candidates and observed 100% meaningful-candidate precision with an 86.2% Wilson 95% lower bound, while explicitly excluding recall and comprehension claims.
+- Benchmarked text-linked BM25, local CLIP text-to-image retrieval, and untuned reciprocal-rank fusion on 12 verified queries over the same 24-candidate pool; measured Recall@10 of 41.7%, 58.3%, and 66.7% respectively, while CLIP led hybrid at Recall@3 (58.3% versus 50.0%).
 
 Every metric above must remain qualified as a regression baseline because the manually verified set contains only 20 questions from one product family.
 
@@ -29,6 +30,7 @@ I built a grounded troubleshooting assistant for ABB ACS580 drives. It verifies 
 4. Open `/ready` and `/metrics` to demonstrate production engineering.
 5. Show the golden CSV and explain how evaluation changed the architecture.
 6. Show `visual_labels.csv`, explain stratified sampling, and distinguish candidate precision from diagram understanding.
+7. Compare all three visual retrieval reports and explain why the small post-authored benchmark is not yet allowed to affect answers.
 
 ## Claims to avoid
 
@@ -36,6 +38,7 @@ I built a grounded troubleshooting assistant for ABB ACS580 drives. It verifies 
 - Do not claim dense retrieval improved results.
 - Do not claim visual diagram understanding or complete OCR.
 - Describe the visual records as detector candidates until a manually labeled visual evaluation set exists.
+- Do not describe CLIP retrieval as diagram comprehension, visual question answering, or full-corpus performance.
 - Do not generalize the 20-question, single-family metrics to unseen equipment.
 - Do not claim Docker runtime verification on the current computer.
 - Do not claim interactive browser QA for the visual evidence cards; backend integration, lint, and production build are verified, while localhost browser automation was blocked by the app policy.
