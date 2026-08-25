@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Image from "next/image";
 
 type Citation = {
   chunk_id: string;
@@ -16,6 +17,15 @@ type Answer = {
   abstained: boolean;
   confidence: number;
   citations: Citation[];
+  visual_evidence: VisualEvidence[];
+};
+
+type VisualEvidence = {
+  asset_id: string;
+  source_filename: string;
+  pdf_page: number;
+  asset_type: string;
+  nearby_text: string;
 };
 
 type Evaluation = {
@@ -114,6 +124,33 @@ export default function Home() {
               </article>
             ))}
           </div>
+          {answer.visual_evidence.length > 0 && (
+            <>
+              <div className="visual-heading">
+                <h2>Page-linked visual candidates</h2>
+                <span>Displayed for context · not used to form the answer</span>
+              </div>
+              <div className="visual-grid">
+                {answer.visual_evidence.map((visual) => (
+                  <article key={visual.asset_id} className="visual-card">
+                    <a href={`${API}/visuals/${encodeURIComponent(visual.asset_id)}/image`} target="_blank">
+                      {/* The API crop is derived from a validated manual/page record. */}
+                      <Image
+                        src={`${API}/visuals/${encodeURIComponent(visual.asset_id)}/image`}
+                        alt={`Detected ${visual.asset_type.replaceAll("_", " ")} on page ${visual.pdf_page}`}
+                        width={720}
+                        height={520}
+                        unoptimized
+                        loading="lazy"
+                      />
+                    </a>
+                    <div className="citation">{visual.source_filename} · PDF page {visual.pdf_page}</div>
+                    <p>{visual.nearby_text || visual.asset_type.replaceAll("_", " ")}</p>
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
         </section>
       )}
     </main>

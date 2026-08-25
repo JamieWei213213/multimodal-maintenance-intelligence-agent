@@ -27,10 +27,16 @@ button:disabled { opacity: .55; cursor: wait; }
 .answer h2 { margin-top: 28px; font-size: 15px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
 .answer > p { font-size: 18px; line-height: 1.65; }
 .evidence-grid { display: grid; gap: 14px; }
+.visual-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 30px; }
+.visual-heading h2 { margin: 0; }
+.visual-heading span { color: var(--muted); font-size: 12px; }
+.visual-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.visual-card img { display: block; width: 100%; height: 260px; object-fit: contain; background: #f7faf9; border-radius: 8px; margin-bottom: 14px; }
+.visual-card p { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 10px 0 0; }
 article { border: 1px solid var(--line); background: #091215; border-radius: 12px; padding: 18px; }
 .citation { color: var(--accent); font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
 blockquote { margin: 14px 0; color: #cad7da; line-height: 1.55; border-left: 2px solid #46696f; padding-left: 14px; }
 a { color: var(--accent); }
 .error { margin-top: 18px; color: var(--danger); }
 @media (max-width: 760px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px) { main { padding-top: 40px; } .status-row, .evaluation-heading { flex-direction: column; align-items: flex-start; } form, .answer, .evaluation { padding: 20px; } }
+@media (max-width: 640px) { main { padding-top: 40px; } .status-row, .evaluation-heading, .visual-heading { flex-direction: column; align-items: flex-start; } .visual-grid { grid-template-columns: 1fr; } form, .answer, .evaluation { padding: 20px; } }

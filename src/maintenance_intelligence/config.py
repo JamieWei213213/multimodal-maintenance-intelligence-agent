@@ -13,6 +13,9 @@ def _float(name: str, default: float) -> float:
 class Settings:
     chunks_path: Path = Path(os.getenv("CHUNKS_PATH", "data/processed/chunks.jsonl"))
     manuals_path: Path = Path(os.getenv("MANUALS_PATH", "data/manuals"))
+    visual_inventory_path: Path = Path(
+        os.getenv("VISUAL_INVENTORY_PATH", "data/processed/visual_assets.jsonl")
+    )
     evaluation_summary_path: Path = Path(
         os.getenv("EVALUATION_SUMMARY_PATH", "evaluation/baseline_metrics.json")
     )

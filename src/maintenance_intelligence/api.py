@@ -25,6 +25,7 @@ from maintenance_intelligence.observability import (
     request_log,
 )
 from maintenance_intelligence.retrieval import BM25Retriever, load_chunks
+from maintenance_intelligence.visual_evidence import VisualEvidenceIndex
 
 
 class QuestionRequest(BaseModel):
@@ -37,6 +38,7 @@ class AppRuntime:
     chunks_by_id: dict[str, Any]
     dense: Any
     repository: Any
+    visual_index: Any | None = None
 
     def close(self) -> None:
         self.dense.client.close()
@@ -61,6 +63,7 @@ def build_runtime(settings: Settings) -> AppRuntime:
     repository = QueryRepository(settings.database_url)
     repository.initialize()
     chunks_by_id = {chunk.chunk_id: chunk for chunk in chunks}
+    visual_index = VisualEvidenceIndex.load(settings.visual_inventory_path)
     return AppRuntime(
         answerer=GroundedAnswerer(
             hybrid,
@@ -72,6 +75,7 @@ def build_runtime(settings: Settings) -> AppRuntime:
         chunks_by_id=chunks_by_id,
         dense=dense,
         repository=repository,
+        visual_index=visual_index,
     )
 
 
@@ -89,6 +93,7 @@ def create_app(
         app.state.chunks_by_id = runtime.chunks_by_id
         app.state.dense = runtime.dense
         app.state.repository = runtime.repository
+        app.state.visual_index = runtime.visual_index or VisualEvidenceIndex([])
         try:
             yield
         finally:
@@ -113,6 +118,7 @@ def create_app(
                 request.url.path == "/ask"
                 or request.url.path.startswith("/documents/")
                 or request.url.path.startswith("/evidence/")
+                or request.url.path.startswith("/visuals/")
             )
             supplied_key = request.headers.get("x-api-key", "")
             if settings.api_key and protected and not secrets.compare_digest(
@@ -161,6 +167,7 @@ def create_app(
             "chunks": len(app.state.chunks_by_id),
             "vectors": point_count,
             "collection": settings.qdrant_collection,
+            "visual_candidates": len(app.state.visual_index),
         }
 
     @app.get("/metrics", include_in_schema=False)
@@ -180,6 +187,11 @@ def create_app(
     @app.post("/ask")
     def ask(request: QuestionRequest) -> dict[str, object]:
         response = app.state.answerer.answer(request.question)
+        response["visual_evidence"] = (
+            app.state.visual_index.for_citations(response.get("citations", []))
+            if not response["abstained"]
+            else []
+        )
         metrics.answers.labels(str(response["abstained"]).lower()).inc()
         app.state.repository.record(request.question, response)
         return response
@@ -216,6 +228,26 @@ def create_app(
                     overlay=True,
                 )
             pixmap = page.get_pixmap(dpi=144, alpha=False)
+            return Response(content=pixmap.tobytes("png"), media_type="image/png")
+
+    @app.get("/visuals/{asset_id}/image")
+    def visual_image(asset_id: str) -> Response:
+        asset = app.state.visual_index.get(asset_id)
+        if asset is None:
+            raise HTTPException(status_code=404, detail="Visual candidate not found")
+        path = settings.manuals_path / Path(asset.source_filename).name
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Document not found")
+        with pymupdf.open(path) as document:
+            if asset.pdf_page < 1 or asset.pdf_page > len(document):
+                raise HTTPException(status_code=404, detail="Page not found")
+            page = document[asset.pdf_page - 1]
+            bbox = pymupdf.Rect(asset.bbox)
+            clip = pymupdf.Rect(bbox.x0 - 24, bbox.y0 - 24, bbox.x1 + 24, bbox.y1 + 24) & page.rect
+            if clip.is_empty or clip.is_infinite:
+                raise HTTPException(status_code=422, detail="Visual candidate has an invalid bounding box")
+            page.draw_rect(bbox, color=(0.12, 0.68, 0.78), width=2, overlay=True)
+            pixmap = page.get_pixmap(clip=clip, dpi=144, alpha=False)
             return Response(content=pixmap.tobytes("png"), media_type="image/png")
 
     return app

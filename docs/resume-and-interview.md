@@ -10,6 +10,7 @@ Multimodal Maintenance Intelligence Agent — grounded RAG for industrial troubl
 - Implemented and evaluated term-frequency, BM25, BGE-small dense, and weighted reciprocal-rank hybrid retrieval; measured 100% Recall@10 for BM25 and lexical-heavy hybrid versus 50% for dense retrieval on a manually verified 12-question answerable set.
 - Achieved 100% acceptable-page answer citation accuracy across 12 answerable questions and 100% abstention recall with a 0% false-answer rate across 8 adversarial unsupported questions using adjacent-chunk expansion, technical-code boosting, document-aware evidence selection, and conjunctive safety gates.
 - Developed a FastAPI service and Next.js/TypeScript interface with citation validation, highlighted PDF evidence, optional PostgreSQL audit logging, Qdrant vector search, request IDs, structured logs, readiness checks, Prometheus metrics, and optional API-key protection.
+- Added provenance-checked visual crops to successful answers by exact citation-page joins, while isolating visuals from answer generation and abstention logic and preventing internal render paths from entering the API response.
 - Added a passing Python test suite, frontend lint and production-build gates, Docker Compose orchestration, container health checks, and GitHub Actions CI.
 - Built a provenance-preserving visual inventory of 1,462 page-linked candidates (372 raster images and 1,090 vector regions), with stable IDs, bounding boxes, and nearby captions, as the measurable foundation for later diagram understanding.
 - Created a deterministic visual-evaluation workflow spanning all six document/type strata; manually inspected 24 candidates and observed 100% meaningful-candidate precision with an 86.2% Wilson 95% lower bound, while explicitly excluding recall and comprehension claims.
@@ -37,3 +38,4 @@ I built a grounded troubleshooting assistant for ABB ACS580 drives. It verifies 
 - Describe the visual records as detector candidates until a manually labeled visual evaluation set exists.
 - Do not generalize the 20-question, single-family metrics to unseen equipment.
 - Do not claim Docker runtime verification on the current computer.
+- Do not claim interactive browser QA for the visual evidence cards; backend integration, lint, and production build are verified, while localhost browser automation was blocked by the app policy.

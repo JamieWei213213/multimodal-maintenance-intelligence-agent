@@ -35,9 +35,10 @@
     "warning": "Measures candidate usefulness only; does not measure detector recall, diagram comprehension, or visual question answering."
   },
   "verification": {
-    "backend_tests": 28,
+    "backend_tests": 31,
     "frontend_lint": "passing",
     "frontend_build": "passing",
-    "docker_runtime": "not_verified_locally"
+    "docker_runtime": "not_verified_locally",
+    "interactive_browser_qa": "blocked_by_localhost_url_policy"
   }
 }

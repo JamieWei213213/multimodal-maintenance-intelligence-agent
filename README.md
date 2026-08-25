@@ -17,7 +17,7 @@ Technician question -> BM25 + dense -> reciprocal-rank fusion -> grounded extrac
 Next.js UI -> FastAPI -> PostgreSQL query/audit log
 ```
 
-The current answer layer is deliberately extractive. It assembles sentences already present in the manuals instead of asking a generative model to invent prose or procedures.
+The current answer layer is deliberately extractive. It assembles sentences already present in the manuals instead of asking a generative model to invent prose or procedures. Visual candidates from the same validated citation pages are returned in a separate field and displayed as contextual evidence; they cannot affect answer text or abstention decisions.
 
 Operational endpoints expose separate liveness (`/health`) and retrieval-readiness (`/ready`) checks. Every response includes an `X-Request-ID`, API requests are emitted as structured JSON logs, and Prometheus metrics are available at `/metrics`.
 
@@ -85,6 +85,7 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 - BGE-small embeddings handle paraphrases and concept similarity.
 - Weighted reciprocal-rank fusion merges independently ranked candidate lists without pretending their scores share a scale. The evaluated default favors BM25 16:1 because equal weighting reduced exact-page recall on the current golden set.
 - Answer sentences must come from retrieved chunks, and every citation is checked against the chunk registry before returning.
+- Visual evidence is joined only after a grounded text answer succeeds, by exact source filename and PDF page. Abstained responses return no visuals, and visual records never enter answer scoring.
 - The selected result expands to the immediately adjacent chunks on the same page, improving split procedures and tables without crossing page boundaries; each original chunk remains separately validated and cited.
 - Low-confidence retrieval returns an explicit insufficient-evidence response.
 - Safety-tagged evidence is surfaced and safety wording is not rewritten into new procedures.
@@ -96,6 +97,8 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 These are deliberately called *candidates*. The detector does not classify diagram meaning, read wiring relationships, or use visual content to answer questions. That separation makes future diagram experiments measurable and keeps current resume claims honest.
 
 A deterministic 24-item sample covers all six document/type strata (three manuals times raster/vector). Visual inspection found meaningful engineering content in all 24 candidates; the 100% observed sampled precision has a 95% Wilson lower bound of 86.2%. This small, single-family sample measures candidate usefulness only. It does not measure missed visuals (recall), diagram comprehension, or visual question answering, and it has not been independently double-annotated.
+
+The API exposes provenance-checked visual crops at `/visuals/{asset_id}/image`. Arbitrary filenames are never accepted by this route, crop bounds come from the offline inventory, and internal rendered-file paths are excluded from the response schema. The UI labels every crop as contextual evidence that was not used to form the answer.
 
 ## Known limitations
 
