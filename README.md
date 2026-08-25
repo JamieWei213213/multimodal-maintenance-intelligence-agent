@@ -2,6 +2,22 @@
 
 A grounded, text-first troubleshooting assistant for the ABB ACS580-01 variable-frequency-drive family. It ingests three public manuals, preserves page-level provenance and safety language, combines BM25 and dense retrieval, answers only from retrieved evidence, validates citations, renders highlighted source pages, and abstains when support is weak.
 
+> **Portfolio/research MVP:** This project is not safety-certified, production-approved, or a substitute for manufacturer documentation, qualified personnel, lockout/tagout procedures, or site safety rules.
+
+## Verified project snapshot
+
+| Area | Verified result |
+| --- | --- |
+| Corpus | 3 manuals, 1,482 pages, 11,888 provenance-preserving chunks |
+| Text retrieval | 100% hybrid Recall@10 on 12 answerable regression questions |
+| Grounding | 100% acceptable-page citation accuracy on 12 answerable questions |
+| Abstention | 100% recall and 0% false-answer rate on 8 unsupported questions |
+| Visual inventory | 1,462 page-linked candidates; 24 manually inspected labels |
+| Visual retrieval | 41.7% lexical, 58.3% CLIP, and 66.7% hybrid Recall@10 on 12 queries over the same 24 candidates |
+| Engineering gates | 38 Python tests, clean frontend lint, successful production TypeScript build |
+
+Every percentage above is a versioned regression result from a small, single-product-family benchmark. It is not evidence of production accuracy or generalization.
+
 ## Architecture
 
 ```text
@@ -27,13 +43,13 @@ The UI and `/evaluation` endpoint expose a versioned evaluation snapshot. Curren
 
 - Source PDFs: `data/manuals/`
 - Verified checksums: `evaluation/corpus_checksums.csv`
+- Versioned corpus summary: `evaluation/corpus_manifest.json`
 - Golden questions: `evaluation/golden_questions.csv`
 - Documents, pages, chunks, and run manifest: `data/processed/`
 - Page-linked raster and vector candidates: `data/processed/visual_assets.jsonl` (generated and ignored by Git)
 - Local Qdrant index: `data/qdrant/` (generated and ignored by Git)
 - Retrieval reports: `evaluation/results/` (generated and ignored by Git)
 - Manually inspected visual labels and metrics: `evaluation/visual_labels.csv` and `evaluation/visual_metrics.json`
-- Portfolio evidence and limitation matrix: `docs/portfolio-audit.md`
 
 Chunks never cross PDF page boundaries. Each retains document name, PDF page, printed page when detected, section path, bounding boxes, extraction method, content type, and safety tags.
 
@@ -82,6 +98,12 @@ docker compose up --build
 
 Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then starts FastAPI and Next.js. Recreating the index intentionally delays the API on first boot. The three manuals and processed chunks must already exist under `data/`.
 
+The Docker definitions are included for reproducible deployment, but a Compose launch was not verified on the development machine because Docker was unavailable there.
+
+## Repository boundaries
+
+The public repository intentionally excludes ABB PDFs, extracted JSONL data, page crops, Qdrant storage, model weights, virtual environments, dependency folders, build output, secrets, and query logs. Contributors must download the public manuals themselves and reproduce generated artifacts locally. Never commit production manuals, equipment identifiers, credentials, or technician query logs.
+
 ## Retrieval and grounding behavior
 
 - BM25 handles exact identifiers, parameters, warning codes, and rare terms.
@@ -122,10 +144,14 @@ The CLIP models run locally through FastEmbed, and their cache is excluded from 
 
 ## Recommended next upgrades
 
-1. Expand and manually verify the golden set, including adversarial and unanswerable questions; tune the abstention threshold from measured precision/coverage.
-2. Add reranking after hybrid retrieval and compare it against the existing baseline before accepting the added latency.
-3. Add OCR layout regression tests and install Tesseract for scanned manuals.
-4. Manually label a representative sample of visual candidates, measure detector precision/recall, then benchmark diagram-aware retrieval against the text-only baseline.
-5. Add an optional citation-constrained LLM synthesis layer with sentence-level entailment checks; retain extractive fallback.
-6. Pin the Qdrant container image after testing a deployment target, add authentication/TLS, migrations, observability, rate limits, and background indexing.
+1. Expand the text and visual golden sets with independently authored, held-out questions from additional equipment families.
+2. Measure full-corpus visual detector recall and false positives rather than candidate precision alone.
+3. Install Tesseract and add scanned-page OCR layout regression tests.
+4. Compare a cross-encoder reranker against the existing lexical-heavy text baseline before accepting its latency.
+5. Add optional citation-constrained synthesis with sentence-level entailment checks while retaining the extractive fallback.
+6. Verify Compose on a Docker-enabled host, then add identity-aware authentication, TLS, migrations, rate limits, backups, alerting, and dependency scanning.
 7. Consider a knowledge graph only if cross-document evaluation demonstrates a measurable failure that graph traversal fixes.
+
+## Publishing notes
+
+A clean clone requires the three public manuals listed in `data/manuals/README.md`. Copy `.env.example` to `.env`, keep all secrets local, and run the verification commands before opening a pull request. No license has been selected; choose one deliberately before granting reuse rights.

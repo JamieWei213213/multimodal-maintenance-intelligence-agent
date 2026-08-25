@@ -44,9 +44,11 @@ def test_published_metrics_match_versioned_evaluation_evidence():
 
 def test_corpus_manifest_counts_match_published_snapshot():
     baseline = _json("evaluation/baseline_metrics.json")
-    manifest = _json("data/processed/run_manifest.json")
+    manifest = _json("evaluation/corpus_manifest.json")
     checksums = _csv_rows("evaluation/corpus_checksums.csv")
     assert baseline["corpus"]["documents"] == len(checksums)
-    assert baseline["corpus"]["documents"] == manifest["counts"]["documents"]
-    assert baseline["corpus"]["pages"] == manifest["counts"]["pages"]
-    assert baseline["corpus"]["chunks"] == manifest["counts"]["chunks"]
+    assert baseline["corpus"]["documents"] == manifest["documents"]
+    assert baseline["corpus"]["pages"] == manifest["pages"]
+    assert baseline["corpus"]["chunks"] == manifest["chunks"]
+    assert baseline["corpus"]["table_chunks"] == manifest["table_chunks"]
+    assert baseline["corpus"]["safety_chunks"] == manifest["safety_chunks"]

@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "corpus": "ABB ACS580-01 public manual family",
+  "documents": 3,
+  "pages": 1482,
+  "chunks": 11888,
+  "table_chunks": 1874,
+  "safety_chunks": 496,
+  "ocr_pages": 0,
+  "low_text_pages_without_ocr": 28,
+  "runtime": {
+    "python": "3.12.0",
+    "pymupdf": "1.28.2"
+  },
+  "limitations": [
+    "Tesseract was unavailable during the recorded ingestion run.",
+    "The PDF files are third-party public manuals and are intentionally excluded from Git."
+  ]
+}
