@@ -17,6 +17,12 @@ STOP_WORDS = {
 }
 
 
+def is_technical_identifier(token: str) -> bool:
+    return any(character.isalpha() for character in token) and any(
+        character.isdigit() for character in token
+    )
+
+
 @dataclass(frozen=True)
 class SearchResult:
     chunk: ChunkRecord
@@ -94,6 +100,7 @@ class BM25Retriever:
         *,
         k1: float = 1.5,
         b: float = 0.75,
+        identifier_boost: float = 2.0,
     ) -> None:
         if k1 <= 0:
             raise ValueError("k1 must be greater than zero")
@@ -102,6 +109,7 @@ class BM25Retriever:
         self.chunks = chunks
         self.k1 = k1
         self.b = b
+        self.identifier_boost = identifier_boost
         self._token_counts = [Counter(tokenize(chunk.text)) for chunk in chunks]
         self._lengths = [sum(counts.values()) for counts in self._token_counts]
         self._average_length = sum(self._lengths) / len(self._lengths) if self._lengths else 0.0
@@ -134,6 +142,8 @@ class BM25Retriever:
                 length_ratio = length / self._average_length if self._average_length else 0.0
                 denominator = term_frequency + self.k1 * (1 - self.b + self.b * length_ratio)
                 score += self._idf(token) * (term_frequency * (self.k1 + 1)) / denominator
+                if is_technical_identifier(token):
+                    score += self.identifier_boost * self._idf(token)
             if score > 0:
                 results.append(SearchResult(chunk=chunk, score=score))
 
@@ -146,4 +156,3 @@ class BM25Retriever:
             )
         )
         return _deduplicate_pages(results, limit)
-

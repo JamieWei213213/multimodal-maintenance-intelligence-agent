@@ -22,6 +22,18 @@ CONJUNCTIVE_PROCEDURE_TERMS = {
     "torque",
 }
 
+CONJUNCTIVE_REQUEST_GROUPS = (
+    {"plc", "ladder", "logic", "program"},
+    {"hydraulic", "pressure"},
+    {"encoder", "connector", "pinout"},
+    {"static", "ip", "address"},
+    {"replacement", "brake", "resistor", "part", "number"},
+    {"bearing", "lubricated", "lubrication", "grease"},
+    {"arc", "flash", "ppe", "category"},
+)
+
+ENCLOSURE_CODES = {"ip21", "ip55", "ip66"}
+
 
 def _sentences(text: str) -> list[str]:
     # PDF table cells and narrow columns often insert line breaks mid-sentence.
@@ -103,6 +115,23 @@ class GroundedAnswerer:
             score *= 0.5
         if pdf_page <= 3 and not query_tokens.intersection({"title", "document", "revision"}):
             score *= 0.35
+        non_ascii = sum(ord(character) > 127 for character in context)
+        if context and non_ascii / len(context) > 0.08:
+            score *= 0.2
+        requested_enclosures = query_tokens.intersection(ENCLOSURE_CODES)
+        context_enclosures = set(tokenize(context)).intersection(ENCLOSURE_CODES)
+        if requested_enclosures and context_enclosures.difference(requested_enclosures):
+            score *= 0.5
+        metric_sizes = [token for token in query_tokens if re.fullmatch(r"m\d+", token)]
+        if "torque" in query_tokens and metric_sizes:
+            normalized = re.sub(r"\s+", " ", lowered)
+            for size in metric_sizes:
+                near_torque = re.search(
+                    rf"(?:{size}.{{0,100}}\d+(?:\.\d+)?\s*n[·. ]?m|"
+                    rf"\d+(?:\.\d+)?\s*n[·. ]?m.{{0,100}}{size})",
+                    normalized,
+                )
+                score += 5.0 if near_torque else -2.0
         return score
 
     def _context_chunks(self, chunk):
@@ -131,15 +160,23 @@ class GroundedAnswerer:
         ):
             return {"answer": INSUFFICIENT, "abstained": True, "citations": [], "confidence": 0.0}
 
+        for group in CONJUNCTIVE_REQUEST_GROUPS:
+            requested = query_tokens.intersection(group)
+            if len(requested) >= 2 and not any(
+                requested.issubset(set(tokenize(" ".join(chunk.text for chunk in context_chunks))))
+                for context_chunks in context_groups
+            ):
+                return {"answer": INSUFFICIENT, "abstained": True, "citations": [], "confidence": 0.0}
+
         supported = []
-        for position, context_chunks in enumerate(context_groups):
+        for position, (result, context_chunks) in enumerate(zip(results, context_groups, strict=True)):
             context = " ".join(chunk.text for chunk in context_chunks)
             supported.append((
                 self._selection_score(
                     context,
                     query_tokens,
-                    context_chunks[0].source_filename,
-                    context_chunks[0].pdf_page,
+                    result.result.chunk.source_filename,
+                    result.result.chunk.pdf_page,
                 ),
                 position,
                 context,

@@ -7,12 +7,12 @@ Multimodal Maintenance Intelligence Agent — grounded RAG for industrial troubl
 ## Verified resume bullets
 
 - Built a grounded industrial-document assistant over 3 ABB ACS580 manuals and 1,482 pages, producing 11,888 page-bounded chunks with stable provenance, safety tags, table classification, and PDF bounding boxes.
-- Implemented and evaluated term-frequency, BM25, BGE-small dense, and weighted reciprocal-rank hybrid retrieval; measured 100% Recall@10 for BM25 and lexical-heavy hybrid on an initial 4-question answerable set while documenting dense retrieval's 0% baseline.
-- Increased expected-page answer citation accuracy from 25% to 100% on the initial golden set using adjacent-chunk expansion and rarity-weighted, document-aware evidence selection; preserved 100% abstention on the single unsupported procedure question.
+- Implemented and evaluated term-frequency, BM25, BGE-small dense, and weighted reciprocal-rank hybrid retrieval; measured 100% Recall@10 for BM25 and lexical-heavy hybrid versus 50% for dense retrieval on a manually verified 12-question answerable set.
+- Achieved 100% acceptable-page answer citation accuracy across 12 answerable questions and 100% abstention recall with a 0% false-answer rate across 8 adversarial unsupported questions using adjacent-chunk expansion, technical-code boosting, document-aware evidence selection, and conjunctive safety gates.
 - Developed a FastAPI service and Next.js/TypeScript interface with citation validation, highlighted PDF evidence, optional PostgreSQL audit logging, Qdrant vector search, request IDs, structured logs, readiness checks, Prometheus metrics, and optional API-key protection.
-- Added 20 passing Python tests, frontend lint and production-build gates, Docker Compose orchestration, container health checks, and GitHub Actions CI.
+- Added a passing Python test suite, frontend lint and production-build gates, Docker Compose orchestration, container health checks, and GitHub Actions CI.
 
-Every metric above must remain qualified as an initial regression baseline because the manually verified golden set contains only five questions.
+Every metric above must remain qualified as a regression baseline because the manually verified set contains only 20 questions from one product family.
 
 ## Thirty-second explanation
 
@@ -31,5 +31,5 @@ I built a grounded troubleshooting assistant for ABB ACS580 drives. It verifies 
 - Do not call the application production-ready or safety-certified.
 - Do not claim dense retrieval improved results.
 - Do not claim visual diagram understanding or complete OCR.
-- Do not generalize five-question metrics to unseen equipment.
+- Do not generalize the 20-question, single-family metrics to unseen equipment.
 - Do not claim Docker runtime verification on the current computer.

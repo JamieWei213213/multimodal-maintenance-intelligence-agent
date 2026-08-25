@@ -106,3 +106,18 @@ def test_adjacent_chunks_expand_context_without_crossing_pages():
         "first",
         "continuation",
     }
+
+
+def test_site_specific_network_request_abstains_without_joint_support():
+    network = sample_chunk().__class__(
+        **{
+            **sample_chunk().to_dict(),
+            "chunk_id": "network",
+            "text": "The fieldbus adapter communicates with the drive.",
+        }
+    )
+    chunks = {network.chunk_id: network}
+    response = GroundedAnswerer(_FakeHybrid([network]), chunks).answer(
+        "What static IP address should be assigned to this site?"
+    )
+    assert response["abstained"] is True

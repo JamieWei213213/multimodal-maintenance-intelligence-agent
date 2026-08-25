@@ -2,9 +2,17 @@ from pathlib import Path
 
 from maintenance_intelligence.retrieval import (
     KeywordRetriever,
+    is_technical_identifier,
     load_chunks,
     tokenize,
 )
+
+
+def test_technical_identifier_detection_preserves_mixed_codes():
+    assert is_technical_identifier("a5a0")
+    assert is_technical_identifier("ip55")
+    assert not is_technical_identifier("warning")
+    assert not is_technical_identifier("5091")
 
 
 def test_keyword_search_returns_a2b1_evidence():

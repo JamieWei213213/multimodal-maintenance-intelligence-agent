@@ -25,6 +25,16 @@ class GoldenQuestion:
     source_document: str
     pdf_page: int | None
     answerability: str
+    alternate_citations: tuple[tuple[str, int], ...] = ()
+
+    @property
+    def acceptable_citations(self) -> tuple[tuple[str, int], ...]:
+        primary = (
+            ((self.source_document, self.pdf_page),)
+            if self.source_document and self.pdf_page is not None
+            else ()
+        )
+        return primary + self.alternate_citations
 
 
 def load_golden_questions(path: Path) -> list[GoldenQuestion]:
@@ -32,6 +42,13 @@ def load_golden_questions(path: Path) -> list[GoldenQuestion]:
     with path.open("r", encoding="utf-8-sig", newline="") as file:
         for row in csv.DictReader(file):
             raw_page = row.get("pdf_page", "").strip()
+            alternate_document = (row.get("alternate_source_document") or "").strip()
+            alternate_page = (row.get("alternate_pdf_page") or "").strip()
+            alternates = (
+                ((alternate_document, int(alternate_page)),)
+                if alternate_document and alternate_page
+                else ()
+            )
             questions.append(
                 GoldenQuestion(
                     question_id=row["id"],
@@ -39,6 +56,7 @@ def load_golden_questions(path: Path) -> list[GoldenQuestion]:
                     source_document=row.get("source_document", "").strip(),
                     pdf_page=int(raw_page) if raw_page else None,
                     answerability=row["answerability"].strip(),
+                    alternate_citations=alternates,
                 )
             )
     return questions
@@ -67,11 +85,12 @@ def evaluate_retriever(
         evaluated += 1
         results = retriever.search(question.question, limit=limit)
         expected = (question.source_document, question.pdf_page)
+        acceptable = set(question.acceptable_citations)
         rank = next(
             (
                 result.rank
                 for result in results
-                if (result.chunk.source_filename, result.chunk.pdf_page) == expected
+                if (result.chunk.source_filename, result.chunk.pdf_page) in acceptable
             ),
             None,
         )
@@ -85,6 +104,10 @@ def evaluate_retriever(
             "status": "hit" if rank is not None else "miss",
             "question": question.question,
             "expected": {"source_document": expected[0], "pdf_page": expected[1]},
+            "acceptable_citations": [
+                {"source_document": source, "pdf_page": page}
+                for source, page in question.acceptable_citations
+            ],
             "rank": rank,
             "top_results": [
                 {
@@ -139,8 +162,8 @@ def evaluate_answerer(
             answered += int(not abstained)
             citation_hit = any(
                 isinstance(citation, dict)
-                and citation.get("source_filename") == question.source_document
-                and citation.get("pdf_page") == question.pdf_page
+                and (citation.get("source_filename"), citation.get("pdf_page"))
+                in set(question.acceptable_citations)
                 for citation in citations
             )
             citation_hits += int(not abstained and citation_hit)

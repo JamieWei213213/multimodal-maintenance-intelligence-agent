@@ -20,7 +20,7 @@ The current answer layer is deliberately extractive. It assembles sentences alre
 
 Operational endpoints expose separate liveness (`/health`) and retrieval-readiness (`/ready`) checks. Every response includes an `X-Request-ID`, API requests are emitted as structured JSON logs, and Prometheus metrics are available at `/metrics`.
 
-The UI and `/evaluation` endpoint expose a versioned evaluation snapshot. Current answer-level results are 100% expected-page citation accuracy and 100% abstention recall on the initial five-question set. These numbers are intentionally displayed with a small-sample warning and must not be treated as production-quality estimates.
+The UI and `/evaluation` endpoint expose a versioned evaluation snapshot. Current answer-level results are 100% acceptable-page citation accuracy across 12 answerable questions and 100% abstention recall with a 0% false-answer rate across 8 adversarial unsupported questions. The 20-question, single-product-family benchmark remains intentionally labeled as too small for production-quality conclusions.
 
 ## Corpus and generated artifacts
 
@@ -89,7 +89,7 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 - Evidence highlighting uses chunk block bounding boxes, not word-perfect character coordinates.
 - The extractive answerer is safer and auditable but less conversational than a carefully constrained LLM.
 - Qdrant indexing is CPU-heavy on first run because embeddings are created locally.
-- The evidence selector is tuned on an initial five-question corpus; its perfect answer-level snapshot is a regression baseline, not evidence of generalization.
+- The evidence selector is evaluated on only 20 questions from one product family; its perfect answer-level snapshot is a regression baseline, not evidence of generalization.
 - Diagram interpretation is not implemented yet; diagrams are currently retrievable only through nearby text and captions.
 - PostgreSQL stores query audit events, while document metadata remains in versioned JSONL artifacts for this MVP.
 

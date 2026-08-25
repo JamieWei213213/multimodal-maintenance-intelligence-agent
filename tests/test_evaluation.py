@@ -26,3 +26,26 @@ def test_answer_evaluation_measures_citations_and_abstention():
         "unanswerable_false_answer_rate": 0.0,
         "overall_decision_accuracy": 1.0,
     }
+
+
+def test_alternate_manually_valid_citation_counts_as_hit():
+    question = GoldenQuestion(
+        "Q3",
+        "supported question",
+        "summary.pdf",
+        3,
+        "answerable",
+        alternate_citations=(("detailed.pdf", 9),),
+    )
+
+    class AlternateAnswerer:
+        def answer(self, question: str):
+            return {
+                "answer": "Supported",
+                "abstained": False,
+                "confidence": 0.8,
+                "citations": [{"source_filename": "detailed.pdf", "pdf_page": 9}],
+            }
+
+    report = evaluate_answerer(AlternateAnswerer(), [question])
+    assert report["metrics"]["answerable_citation_accuracy"] == 1.0
