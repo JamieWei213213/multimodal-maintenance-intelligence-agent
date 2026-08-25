@@ -33,6 +33,7 @@ The UI and `/evaluation` endpoint expose a versioned evaluation snapshot. Curren
 - Local Qdrant index: `data/qdrant/` (generated and ignored by Git)
 - Retrieval reports: `evaluation/results/` (generated and ignored by Git)
 - Manually inspected visual labels and metrics: `evaluation/visual_labels.csv` and `evaluation/visual_metrics.json`
+- Portfolio evidence and limitation matrix: `docs/portfolio-audit.md`
 
 Chunks never cross PDF page boundaries. Each retains document name, PDF page, printed page when detected, section path, bounding boxes, extraction method, content type, and safety tags.
 
