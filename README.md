@@ -154,4 +154,8 @@ The CLIP models run locally through FastEmbed, and their cache is excluded from 
 
 ## Publishing notes
 
-A clean clone requires the three public manuals listed in `data/manuals/README.md`. Copy `.env.example` to `.env`, keep all secrets local, and run the verification commands before opening a pull request. No license has been selected; choose one deliberately before granting reuse rights.
+A clean clone requires the three public manuals listed in `data/manuals/README.md`. Copy `.env.example` to `.env`, keep all secrets local, and run the verification commands before opening a pull request.
+
+## License
+
+The original source code in this repository is available under the [MIT License](LICENSE). ABB manuals, trademarks, product names, and other third-party materials are not covered by this license and are not distributed with the repository.
