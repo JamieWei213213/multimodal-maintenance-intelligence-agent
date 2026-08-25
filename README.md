@@ -32,6 +32,7 @@ The UI and `/evaluation` endpoint expose a versioned evaluation snapshot. Curren
 - Page-linked raster and vector candidates: `data/processed/visual_assets.jsonl` (generated and ignored by Git)
 - Local Qdrant index: `data/qdrant/` (generated and ignored by Git)
 - Retrieval reports: `evaluation/results/` (generated and ignored by Git)
+- Manually inspected visual labels and metrics: `evaluation/visual_labels.csv` and `evaluation/visual_metrics.json`
 
 Chunks never cross PDF page boundaries. Each retains document name, PDF page, printed page when detected, section path, bounding boxes, extraction method, content type, and safety tags.
 
@@ -43,6 +44,8 @@ py -3.12 -m venv .venv
 python -m pip install -e ".[dev]"
 maintenance-ingest
 maintenance-visual-inventory
+maintenance-visual-sample
+maintenance-visual-evaluate
 maintenance-evaluate
 maintenance-index --recreate
 maintenance-evaluate-full
@@ -91,6 +94,8 @@ Compose starts PostgreSQL and Qdrant, runs the one-shot dense indexer, then star
 `maintenance-visual-inventory` inventories embedded raster images and vector-heavy page regions before any visual-model experiments. Every record retains the source filename, one-based PDF page, bounding box, dimensions when available, nearby caption text, and a stable asset ID. The current corpus contains 1,462 candidates: 372 raster images and 1,090 vector regions. Optional page crops can be rendered for annotation or later multimodal evaluation.
 
 These are deliberately called *candidates*. The detector does not classify diagram meaning, read wiring relationships, or use visual content to answer questions. That separation makes future diagram experiments measurable and keeps current resume claims honest.
+
+A deterministic 24-item sample covers all six document/type strata (three manuals times raster/vector). Visual inspection found meaningful engineering content in all 24 candidates; the 100% observed sampled precision has a 95% Wilson lower bound of 86.2%. This small, single-family sample measures candidate usefulness only. It does not measure missed visuals (recall), diagram comprehension, or visual question answering, and it has not been independently double-annotated.
 
 ## Known limitations
 

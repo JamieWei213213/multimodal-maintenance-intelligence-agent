@@ -1,0 +1,57 @@
+{
+  "sample_size": 24,
+  "meaningful_candidates": 24,
+  "sampled_candidate_precision": 1.0,
+  "precision_wilson_95_lower": 0.8620194241710247,
+  "precision_wilson_95_upper": 1.0,
+  "category_counts": {
+    "component_diagram": 1,
+    "connection_table": 1,
+    "control_panel_screenshot": 7,
+    "control_symbol": 1,
+    "installation_diagram": 2,
+    "maintenance_diagram": 1,
+    "parameter_table": 4,
+    "product_photo": 3,
+    "rating_table": 1,
+    "safety_illustration": 1,
+    "wiring_diagram": 2
+  },
+  "strata": [
+    {
+      "source_filename": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+      "asset_type": "raster_image",
+      "count": 4
+    },
+    {
+      "source_filename": "abb_acs580_01_hardware_3AXD50000044794_revG.pdf",
+      "asset_type": "vector_drawing_region",
+      "count": 4
+    },
+    {
+      "source_filename": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+      "asset_type": "raster_image",
+      "count": 4
+    },
+    {
+      "source_filename": "abb_acs580_01_quickstart_3AXD50001317799_revB.pdf",
+      "asset_type": "vector_drawing_region",
+      "count": 4
+    },
+    {
+      "source_filename": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+      "asset_type": "raster_image",
+      "count": 4
+    },
+    {
+      "source_filename": "abb_acs580_firmware_3AXD50000016097_revJ.pdf",
+      "asset_type": "vector_drawing_region",
+      "count": 4
+    }
+  ],
+  "limitations": [
+    "The deterministic sample contains only 24 candidates from one product family.",
+    "This measures whether detected regions are meaningful visuals, not diagram comprehension or retrieval quality.",
+    "Labels were assigned by visual inspection and have not been independently double-annotated."
+  ]
+}

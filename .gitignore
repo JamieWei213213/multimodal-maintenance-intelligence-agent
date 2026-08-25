@@ -6,6 +6,8 @@ __pycache__/
 data/processed/
 data/page_images/
 evaluation/results/
+evaluation/visual_annotations.csv
+evaluation/visual_samples/
 data/qdrant/
 data/models/
 data/manuals/*.pdf

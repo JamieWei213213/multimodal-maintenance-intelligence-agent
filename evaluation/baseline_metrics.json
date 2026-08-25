@@ -27,8 +27,15 @@
     "unanswerable_abstention_recall": 1.0,
     "unanswerable_false_answer_rate": 0.0
   },
+  "visual_candidate_evaluation": {
+    "sample_size": 24,
+    "sampled_candidate_precision": 1.0,
+    "precision_wilson_95_lower": 0.8620194242,
+    "strata_covered": 6,
+    "warning": "Measures candidate usefulness only; does not measure detector recall, diagram comprehension, or visual question answering."
+  },
   "verification": {
-    "backend_tests": 24,
+    "backend_tests": 28,
     "frontend_lint": "passing",
     "frontend_build": "passing",
     "docker_runtime": "not_verified_locally"
