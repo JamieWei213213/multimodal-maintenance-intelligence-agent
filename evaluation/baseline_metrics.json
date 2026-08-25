@@ -1,0 +1,33 @@
+{
+  "corpus": {
+    "documents": 3,
+    "pages": 1482,
+    "chunks": 11888,
+    "vectors": 11888,
+    "table_chunks": 1874,
+    "safety_chunks": 496
+  },
+  "golden_set": {
+    "answerable_questions": 4,
+    "unanswerable_questions": 1,
+    "warning": "The initial golden set is too small for production-quality conclusions."
+  },
+  "retrieval": {
+    "bm25_recall_at_10": 1.0,
+    "dense_recall_at_10": 0.0,
+    "hybrid_recall_at_10": 1.0,
+    "hybrid_mrr": 0.4375
+  },
+  "answering": {
+    "answerable_coverage": 1.0,
+    "answerable_citation_accuracy": 1.0,
+    "unanswerable_abstention_recall": 1.0,
+    "unanswerable_false_answer_rate": 0.0
+  },
+  "verification": {
+    "backend_tests": 20,
+    "frontend_lint": "passing",
+    "frontend_build": "passing",
+    "docker_runtime": "not_verified_locally"
+  }
+}

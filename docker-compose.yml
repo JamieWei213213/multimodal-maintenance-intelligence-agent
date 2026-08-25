@@ -1,0 +1,82 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: maintenance
+      POSTGRES_USER: maintenance
+      POSTGRES_PASSWORD: maintenance
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maintenance -d maintenance"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  qdrant:
+    image: qdrant/qdrant:v1.18.2
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  indexer:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: ["maintenance-index", "--recreate"]
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      CHUNKS_PATH: /app/data/processed/chunks.jsonl
+      MODEL_CACHE: /models
+    volumes:
+      - ./data:/app/data:ro
+      - model_cache:/models
+    depends_on:
+      qdrant:
+        condition: service_started
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      DATABASE_URL: postgresql://maintenance:maintenance@postgres:5432/maintenance
+      QDRANT_URL: http://qdrant:6333
+      CHUNKS_PATH: /app/data/processed/chunks.jsonl
+      MANUALS_PATH: /app/data/manuals
+      MODEL_CACHE: /models
+      CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    volumes:
+      - ./data:/app/data
+      - model_cache:/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      indexer:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    environment:
+      API_URL: http://api:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  model_cache:

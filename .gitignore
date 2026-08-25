@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.pytest-tmp*/
+*.py[cod]
+data/processed/
+data/page_images/
+evaluation/results/
+data/qdrant/
+data/models/
+data/manuals/*.pdf
+.env
+web/node_modules/
+web/.next/
