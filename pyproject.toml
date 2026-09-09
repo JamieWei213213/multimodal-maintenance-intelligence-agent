@@ -26,7 +26,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "httpx>=0.28,<1",
-  "pytest>=8,<9",
+  "pytest>=8,<10",
 ]
 mcp = ["mcp>=2,<3"]
 experiments = ["mlflow>=2.17,<4"]
