@@ -7,6 +7,7 @@ from pathlib import Path
 from maintenance_intelligence.answering import GroundedAnswerer
 from maintenance_intelligence.config import Settings
 from maintenance_intelligence.dense import DenseRetriever
+from maintenance_intelligence.experiments import ExperimentTracker
 from maintenance_intelligence.evaluation import (
     evaluate_retriever,
     evaluate_answerer,
@@ -33,6 +34,7 @@ def main() -> None:
     parser.add_argument("--questions", type=Path, default=Path("evaluation/golden_questions.csv"))
     parser.add_argument("--output-dir", type=Path, default=Path("evaluation/results"))
     parser.add_argument("--limit", type=int, default=10)
+    parser.add_argument("--run-name", default="evaluate-full", help="MLflow run name (logged when MLFLOW_TRACKING_URI is set)")
     args = parser.parse_args()
 
     settings = Settings()
@@ -67,10 +69,26 @@ def main() -> None:
         )
         answering_report = evaluate_answerer(answerer, questions)
         save_evaluation_report(answering_report, args.output_dir / "answering.json")
-        print(json.dumps({
+        summary = {
             **{name: report["metrics"] for name, report in reports.items()},
             "answering": answering_report["metrics"],
-        }, indent=2))
+        }
+        run = ExperimentTracker(settings.mlflow_tracking_uri).log_run(
+            args.run_name,
+            params={
+                "mode": "extractive",
+                "questions": str(args.questions),
+                "limit": args.limit,
+                "embedding_model": settings.embedding_model,
+                "lexical_rrf_weight": settings.lexical_rrf_weight,
+                "dense_rrf_weight": settings.dense_rrf_weight,
+                "abstention_min_rrf": settings.abstention_min_rrf,
+                "adjacent_chunk_radius": settings.adjacent_chunk_radius,
+            },
+            metrics=summary,
+            artifacts=[args.output_dir / f"{name}.json" for name in (*reports, "answering")],
+        )
+        print(json.dumps({**summary, "experiment": {"backend": run.backend, "run_id": run.run_id}}, indent=2))
     finally:
         dense.client.close()
 

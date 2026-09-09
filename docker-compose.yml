@@ -20,6 +20,30 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
+  # One-shot: builds data/processed/ from the PDFs in data/manuals/ the first time.
+  # Skipped automatically when chunks.jsonl already exists.
+  ingest:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        if [ -f /app/data/processed/chunks.jsonl ]; then
+          echo "chunks.jsonl present; skipping ingest"
+        else
+          maintenance-ingest --manual-dir /app/data/manuals --output-dir /app/data/processed
+        fi
+        if [ -f /app/data/processed/visual_assets.jsonl ]; then
+          echo "visual_assets.jsonl present; skipping visual inventory"
+        else
+          maintenance-visual-inventory --manual-dir /app/data/manuals --output /app/data/processed/visual_assets.jsonl
+        fi
+    volumes:
+      - ./data:/app/data
+
   indexer:
     build:
       context: .
@@ -35,11 +59,33 @@ services:
     depends_on:
       qdrant:
         condition: service_started
+      ingest:
+        condition: service_completed_successfully
+
+  # Arize Phoenix: OpenTelemetry trace UI for retrieval / answer / LLM spans.
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"
+    volumes:
+      - phoenix_data:/mnt/data
+
+  # MLflow: experiment tracking for evaluation runs (params, metrics, prompt versions, reports).
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.4.0
+    command: ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--backend-store-uri", "sqlite:////mlflow/mlflow.db", "--artifacts-destination", "/mlflow/artifacts"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
 
   api:
     build:
       context: .
       dockerfile: Dockerfile.api
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATABASE_URL: postgresql://maintenance:maintenance@postgres:5432/maintenance
       QDRANT_URL: http://qdrant:6333
@@ -47,6 +93,9 @@ services:
       MANUALS_PATH: /app/data/manuals
       MODEL_CACHE: /models
       CORS_ORIGINS: http://localhost:3000
+      TRACING_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://phoenix:6006/v1/traces
+      MLFLOW_TRACKING_URI: http://mlflow:5000
     ports:
       - "8000:8000"
     healthcheck:
@@ -62,11 +111,16 @@ services:
         condition: service_healthy
       indexer:
         condition: service_completed_successfully
+      phoenix:
+        condition: service_started
 
   web:
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        # Inlined into the browser bundle at build time; must be reachable from the browser.
+        NEXT_PUBLIC_API_URL: http://localhost:8000
     environment:
       API_URL: http://api:8000
       NEXT_PUBLIC_API_URL: http://localhost:8000
@@ -80,3 +134,5 @@ volumes:
   postgres_data:
   qdrant_data:
   model_cache:
+  phoenix_data:
+  mlflow_data:

@@ -4,14 +4,20 @@ build-backend = "hatchling.build"
 
 [project]
 name = "multimodal-maintenance-intelligence-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Grounded multimodal retrieval and evidence system for industrial maintenance manuals"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi>=0.115,<1",
   "numpy>=1.26,<3",
+  "openai>=1.50,<3",
+  "opentelemetry-api>=1.27,<2",
+  "opentelemetry-exporter-otlp-proto-http>=1.27,<2",
+  "opentelemetry-instrumentation-fastapi>=0.48b0",
+  "opentelemetry-sdk>=1.27,<2",
   "psycopg[binary]>=3.2,<4",
   "prometheus-client>=0.21,<1",
+  "pydantic>=2.9,<3",
   "PyMuPDF>=1.24,<2",
   "qdrant-client[fastembed]>=1.14.2,<2",
   "uvicorn[standard]>=0.34,<1",
@@ -22,6 +28,9 @@ dev = [
   "httpx>=0.28,<1",
   "pytest>=8,<9",
 ]
+mcp = ["mcp>=2,<3"]
+experiments = ["mlflow>=2.17,<4"]
+azure = ["azure-monitor-opentelemetry-exporter>=1.0.0b30"]
 
 [project.scripts]
 maintenance-ingest = "maintenance_intelligence.cli:main"
@@ -34,6 +43,7 @@ maintenance-visual-evaluate = "maintenance_intelligence.visual_evaluate_cli:main
 maintenance-visual-retrieval-evaluate = "maintenance_intelligence.visual_retrieval_cli:main"
 maintenance-visual-clip-evaluate = "maintenance_intelligence.visual_clip_cli:main"
 maintenance-api = "maintenance_intelligence.api_cli:main"
+maintenance-mcp = "maintenance_intelligence.mcp_server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/maintenance_intelligence"]

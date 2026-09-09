@@ -45,10 +45,10 @@
     "warning": "Small post-authored candidate-pool benchmark; not full-corpus retrieval or diagram comprehension."
   },
   "verification": {
-    "backend_tests": 38,
+    "backend_tests": 88,
     "frontend_lint": "passing",
     "frontend_build": "passing",
-    "docker_runtime": "not_verified_locally",
+    "docker_runtime": "compose_config_validated_not_run",
     "interactive_browser_qa": "blocked_by_localhost_url_policy"
   }
 }

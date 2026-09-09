@@ -38,3 +38,22 @@ class Settings:
         for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
         if origin.strip()
     )
+    version: str = os.getenv("APP_VERSION", "0.2.0")
+
+    # LLM provider (Phase 2 synthesis mode, judge, routing). "none" keeps the API
+    # fully extractive; nothing LLM-backed is required for the core service.
+    llm_provider: str = os.getenv("LLM_PROVIDER", "none")
+    llm_model: str = os.getenv("LLM_MODEL", "gpt-5.6-luna")
+    llm_judge_model: str = os.getenv("LLM_JUDGE_MODEL", "gpt-5.6-terra")
+    llm_timeout_seconds: float = _float("LLM_TIMEOUT_SECONDS", 30.0)
+    openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
+    azure_openai_endpoint: str | None = os.getenv("AZURE_OPENAI_ENDPOINT")
+    azure_openai_api_key: str | None = os.getenv("AZURE_OPENAI_API_KEY")
+    azure_openai_api_version: str = os.getenv("AZURE_OPENAI_API_VERSION", "2024-10-21")
+    azure_openai_deployment: str | None = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+
+    # Observability
+    tracing_exporter: str = os.getenv("TRACING_EXPORTER", "none")  # none|console|otlp|azure
+    otlp_endpoint: str | None = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+    applicationinsights_connection_string: str | None = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    mlflow_tracking_uri: str | None = os.getenv("MLFLOW_TRACKING_URI")

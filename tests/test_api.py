@@ -10,13 +10,48 @@ from maintenance_intelligence.visual_evidence import VisualEvidenceIndex
 from maintenance_intelligence.visuals import VisualAssetRecord
 
 
+FAKE_CHUNK_TEXT = "Warning A2B1 overcurrent means the motor current exceeded the limit. Check the motor cable."
+
+FAKE_CHUNKS = {
+    "one": SimpleNamespace(
+        chunk_id="one",
+        source_filename="manual.pdf",
+        pdf_page=1,
+        printed_page="1",
+        text=FAKE_CHUNK_TEXT,
+        contains_safety_warning=False,
+    ),
+    "two": SimpleNamespace(
+        chunk_id="two",
+        source_filename="manual.pdf",
+        pdf_page=2,
+        printed_page="2",
+        text="Unrelated page.",
+        contains_safety_warning=False,
+    ),
+}
+
+
+def fake_citation(chunk_id: str = "one") -> dict:
+    chunk = FAKE_CHUNKS[chunk_id]
+    return {
+        "chunk_id": chunk.chunk_id,
+        "source_filename": chunk.source_filename,
+        "pdf_page": chunk.pdf_page,
+        "printed_page": chunk.printed_page,
+        "evidence": chunk.text,
+        "bboxes": [],
+    }
+
+
 class FakeAnswerer:
     def answer(self, question: str):
+        # Grounded by construction: the answer is a sentence from the cited chunk.
         return {
-            "answer": f"Supported: {question}",
+            "answer": "Evidence from the manual: " + FAKE_CHUNK_TEXT,
             "abstained": False,
             "confidence": 0.9,
-            "citations": [],
+            "citations": [fake_citation()],
         }
 
 
@@ -50,6 +85,18 @@ class FakeVisualIndex:
         return None
 
 
+class FakeAgent:
+    def run(self, question):
+        return {
+            "answer": "Evidence from the manual: " + FAKE_CHUNK_TEXT,
+            "abstained": False,
+            "confidence": 0.9,
+            "citations": [fake_citation()],
+            "visual_evidence": [],
+            "agent": {"task_type": "manual_lookup", "policy": "bounded_read_only", "tool_calls": 3, "trace": []},
+        }
+
+
 def make_client(
     *,
     api_key: str | None = None,
@@ -59,10 +106,11 @@ def make_client(
     repository = FakeRepository()
     runtime = AppRuntime(
         answerer=FakeAnswerer(),
-        chunks_by_id={"one": object(), "two": object()},
+        chunks_by_id=dict(FAKE_CHUNKS),
         dense=SimpleNamespace(client=FakeClient()),
         repository=repository,
         visual_index=visual_index or FakeVisualIndex(),
+        agent=FakeAgent(),
     )
     settings = Settings(
         qdrant_collection="test_chunks",
@@ -99,6 +147,12 @@ def test_health_readiness_request_id_security_headers_and_metrics():
         assert answer.headers["cache-control"] == "no-store"
         assert answer.json()["visual_evidence"][0]["asset_id"] == "vis_test"
         assert repository.events[0][0] == "What is A2B1?"
+
+        agent_answer = client.post("/agent/query", json={"question": "Compare manuals"})
+        assert agent_answer.status_code == 200
+        assert agent_answer.headers["cache-control"] == "no-store"
+        assert agent_answer.json()["agent"]["policy"] == "bounded_read_only"
+        assert repository.events[1][0] == "Compare manuals"
 
         invalid = client.post("/ask", json={"question": "x"})
         assert invalid.status_code == 422

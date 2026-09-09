@@ -32,6 +32,24 @@ class ApiMetrics:
             ("abstained",),
             registry=self.registry,
         )
+        self.guardrail_rejections = Counter(
+            "maintenance_guardrail_rejections_total",
+            "Questions rejected by the input guardrail, by first flag.",
+            ("flag",),
+            registry=self.registry,
+        )
+        self.llm_tokens = Counter(
+            "maintenance_llm_tokens_total",
+            "LLM tokens consumed, by model and direction.",
+            ("model", "direction"),
+            registry=self.registry,
+        )
+        self.llm_cost = Counter(
+            "maintenance_llm_cost_usd_total",
+            "Estimated LLM spend in USD, by model.",
+            ("model",),
+            registry=self.registry,
+        )
 
     def render(self) -> bytes:
         return generate_latest(self.registry)
